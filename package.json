@@ -1,0 +1,23 @@
+{
+  "name": "node_design_patterns",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "find ./test -name '*.spec.js' | xargs mocha -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/howardmann/node-design-patterns.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/howardmann/node-design-patterns/issues"
+  },
+  "homepage": "https://github.com/howardmann/node-design-patterns#readme",
+  "devDependencies": {
+    "chai": "^4.1.2"
+  }
+}
