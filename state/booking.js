@@ -58,27 +58,27 @@ let PaidRefund = function() {
   }  
 }
 
-let booking = new Booking()
-console.log(booking.state.status); // reservation made
-booking.nextState()
-console.log(booking.state.status); // paid confirmation
-booking.nextState()
-console.log(booking.state.status); // redeemed complete
+// let booking = new Booking()
+// console.log(booking.state.status); // reservation made
+// booking.nextState()
+// console.log(booking.state.status); // paid confirmation
+// booking.nextState()
+// console.log(booking.state.status); // redeemed complete
 
-let booking2 = new Booking()
-console.log(booking2.state.status); // reservation made
-booking2.exitState()
-console.log(booking2.state.status); // cancel reservation
-booking2.nextState()
-console.log(booking2.state.status); // cancel reservation
+// let booking2 = new Booking()
+// console.log(booking2.state.status); // reservation made
+// booking2.exitState()
+// console.log(booking2.state.status); // cancel reservation
+// booking2.nextState()
+// console.log(booking2.state.status); // cancel reservation
 
-let booking3 = new Booking()
-console.log(booking3.state.status); // reservation made
-booking3.nextState()
-console.log(booking3.state.status); // paid confirmation
-booking3.exitState()
-console.log(booking3.state.status); // refund processed
-booking3.nextState()
-console.log(booking3.state.status); // refund processed
+// let booking3 = new Booking()
+// console.log(booking3.state.status); // reservation made
+// booking3.nextState()
+// console.log(booking3.state.status); // paid confirmation
+// booking3.exitState()
+// console.log(booking3.state.status); // refund processed
+// booking3.nextState()
+// console.log(booking3.state.status); // refund processed
 
 module.exports = Booking

@@ -30,11 +30,11 @@ let Delivered = function(){
   }
 }
 
-let order = new Order()
-console.log(order.state.name); // waiting for payment
-order.nextState()
-console.log(order.state.name); // shipping in progress
-order.nextState()
-console.log(order.state.name); // goods delivered
+// let order = new Order()
+// console.log(order.state.name); // waiting for payment
+// order.nextState()
+// console.log(order.state.name); // shipping in progress
+// order.nextState()
+// console.log(order.state.name); // goods delivered
 
 module.exports = Order
