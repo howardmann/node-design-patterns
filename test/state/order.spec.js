@@ -1,8 +1,8 @@
 let expect = require('chai').expect
-let Order = require('../../state/app')
+let Order = require('../../state/order')
 
 describe('#Order', function(){
-  it('should exists', () => expect(Order).to.not.be.undefined)
+  it('should exist', () => expect(Order).to.not.be.undefined)
   it('should switch states when nextState is called', () => {
     let order = new Order()
 
