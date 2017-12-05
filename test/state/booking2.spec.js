@@ -2,7 +2,7 @@ let expect = require('chai').expect
 let Booking = require('../../state/booking2')
 let strategies = require('../../state/strategies')
 
-describe('#Booking', function () {
+describe('#Booking2', function () {
   it('should exist', () => expect(Booking).to.not.be.undefined)
   it('should use the relevant strategy for payment options', () => {
     let sendle = strategies.sendle
