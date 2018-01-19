@@ -1,19 +1,23 @@
 
-let Light = function (direction) {
+let Light = function (direction, timer) {
+  // Initial state e.g. NS, EW traffic light
   this.state = {
-    color: 'green',
+    color: 'red',
     direction
   }
 
+  // Chain-of-resp design pattern. Set next function to be other light
   this.next = null
   this.setNext = function (fn) {
     this.next = fn
   }
 
+  // Chain-of-resp, instantiate the colors and set order and time interval they are to be called
+  // For last color red set the next light that is to be called
   this.exec = function () {
-    let green = new Green(this.state)
-    let yellow = new Yellow(this.state)
-    let red = new Red(this.state)
+    let green = new Color(this.state, 'green', 10)
+    let yellow = new Color(this.state, 'yellow', 5)
+    let red = new Color(this.state, 'red', 0)
     green.setNext(yellow)
     yellow.setNext(red)
     red.setNext(this.next)
@@ -21,59 +25,48 @@ let Light = function (direction) {
   }
 }
 
-let Green = function(state){
+let Color = function(state, color, seconds){
+  // Pass the light state to the color
   this.state = state
 
+  // Chain-of-resp design pattern cache next function to be called
   this.next = null
   this.setNext = function (fn) {
     this.next = fn
   }
   
+  // Change state color and call next function after a set second interval period
   this.exec = function () {
-    this.state.color = 'green'    
+    // Call logic here -> change the state color and log the result
+    this.state.color = color
+    console.log(this.state.color, this.state.direction)
+    
+    // Call next fn after n seconds
     setTimeout(() => {
-      console.log(this.state.color, this.state.direction)
       this.next.exec()
-    }, 500)    
+    }, seconds * 1000)
   }
 }
 
-let Yellow = function(state){
-  this.state = state
-
-  this.next = null
-  this.setNext = function (fn) {
-    this.next = fn
-  }
-  
-  this.exec = function () {
-    this.state.color = 'yellow'
-    setTimeout(() => {
-      console.log(this.state.color, this.state.direction)
-      this.next.exec()      
-    }, 500)
+// Simple timer which logs seconds passed. Not really needed for logic
+let Timer = function () {
+  this.seconds = 0
+  this.init = () => {
+    setInterval(() => {
+      this.seconds += 1
+      console.log(this.seconds)
+    }, 1000)
   }
 }
 
-let Red = function(state){
-  this.state = state
+// // Setup the lights with given direction, set next ones to be called to be each other (infinite loop), then call NS first
+// let NS = new Light('North South')
+// let EW = new Light('East West')
+// NS.setNext(EW)
+// EW.setNext(NS)
+// NS.exec()
 
-  this.next = null
-  this.setNext = function (fn) {
-    this.next = fn
-  }
-  
-  this.exec = function () {
-    this.state.color = 'red'
-    setTimeout( () => {
-      console.log(this.state.color, this.state.direction)
-      this.next.exec()      
-    }, 500)
-  }
-}
+// let timer = new Timer()
+// timer.init()
 
-let NS = new Light('North South')
-let EW = new Light('East West')
-NS.setNext(EW)
-EW.setNext(NS)
-NS.exec()
+module.exports = {Timer, Light, Color}

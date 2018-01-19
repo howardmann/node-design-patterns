@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/howardmann/node-design-patterns#readme",
   "devDependencies": {
-    "chai": "^4.1.2"
+    "chai": "^4.1.2",
+    "lolex": "^2.3.1",
+    "sinon": "^4.1.6"
   }
 }
