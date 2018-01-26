@@ -2,7 +2,7 @@ let expect = require('chai').expect
 let sinon = require('sinon')
 let { Timer, Light, Color } = require('../../chain-of-resp/trafficLights.js')
 
-describe.only('#TrafficLights', function () {
+describe('#TrafficLights', function () {
   let NS;
   let EW;
   beforeEach(function(){

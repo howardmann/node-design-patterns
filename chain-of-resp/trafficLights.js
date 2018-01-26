@@ -25,9 +25,9 @@ let Light = function (direction, timer) {
   }
 }
 
-let Color = function(state, color, seconds){
+let Color = function(light, color, seconds){
   // Pass the light state to the color
-  this.state = state
+  this.light = light
 
   // Chain-of-resp design pattern cache next function to be called
   this.next = null
@@ -38,8 +38,8 @@ let Color = function(state, color, seconds){
   // Change state color and call next function after a set second interval period
   this.exec = function () {
     // Call logic here -> change the state color and log the result
-    this.state.color = color
-    console.log(this.state.color, this.state.direction)
+    this.light.color = color
+    console.log(this.light.color, this.light.direction)
     
     // Call next fn after n seconds
     setTimeout(() => {
