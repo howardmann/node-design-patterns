@@ -1,0 +1,84 @@
+<!-- Showing in HTML for presentation purposes to avoid webpack bundling -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ES6 example</title>
+</head>
+
+<body>
+  <h1>ES6 Modular JS</h1>
+  <div id="main"></div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script>
+    // Modular JS using classes
+    class makeShape {
+      constructor(shape, color) {
+        this.props = null
+        this.shape = shape
+        this.color = color
+      }
+
+      init() {
+        this.setState(this.shape, this.color)
+        this.render()
+        this.cacheDOM()
+        this.bindEvents()
+      }
+
+      setState (shape, color) {
+        this.props = {
+          shape, color
+        }
+      }
+
+      cacheDOM() {
+        this.$button = $('.btn')
+        this.$number = $('.number')
+        this.$el = $('.main-shape')
+      }
+
+      bindEvents() {
+        this.$button.on('click', this.getRandom.bind(this))
+      }
+
+      repaint() {
+        this.render()
+        this.cacheDOM()
+        this.bindEvents()
+      }
+
+      getRandom() {
+        let number = Math.random() * 100
+        this.props.number = number
+        this.$number.text(this.props.number)
+      }
+
+      render() {
+        let template = `
+          <div class="main-shape" style="background: ${this.props.color} ">
+            <p>This is a ${this.props.shape}</p>
+            <p>Random number: 
+              <span class="number">${this.props.number}</span>
+            </p>
+            <button class="btn">Click me</button>
+          </div>
+        `
+        $('#main').html(template)
+      }
+    }
+
+    let shape = new makeShape('square', 'palegoldenrod')
+
+    // Initiate
+    $(document).ready(function () {
+      shape.init()
+    })
+  </script>
+</body>
+
+</html>

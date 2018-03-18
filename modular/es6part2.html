@@ -1,0 +1,87 @@
+<!-- Same as ES6 but using sub clases -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ES6 example with subclasses</title>
+</head>
+
+<body>
+  <h1>ES6 Modular JS with subclasses</h1>
+  <div id="main"></div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script>
+    // Parent shape class with no events
+    class makeShape {
+      constructor(shape, color) {
+        this.props = null
+        this.shape = shape
+        this.color = color
+      }
+
+      init() {
+        this.setState(this.shape, this.color)
+        this.render()
+      }
+
+      setState(shape, color) {
+        this.props = {
+          shape, color
+        }
+      }
+
+      render() {
+        let template = `
+          <div class="main-shape" style="background: ${this.props.color} ">
+            <p>This is a ${this.props.shape}</p>
+            <p>Random number: 
+              <span class="number">${this.props.number}</span>
+            </p>
+            <button class="btn">Click me</button>
+          </div>
+        `
+        $('#main').html(template)
+      }
+    }
+
+    class makeShapeActions extends makeShape {
+      constructor(shape, color){
+        super(shape, color)
+      }
+      init(){
+        super.init()
+        this.cacheDOM()
+        this.bindEvents()
+      }
+      cacheDOM() {
+        this.$button = $('.btn')
+        this.$number = $('.number')
+        this.$el = $('.main-shape')
+      }
+
+      bindEvents() {
+        this.$button.on('click', this.getRandom.bind(this))
+      }
+
+      getRandom() {
+        let number = Math.random() * 100
+        this.props.number = number
+        this.$number.text(this.props.number)
+      }
+      
+    }
+
+    let shape = new makeShapeActions('square', 'palegoldenrod')
+
+    // Initiate
+    $(document).ready(function () {
+      shape.init()
+    })
+  </script>
+</body>
+
+</html>
