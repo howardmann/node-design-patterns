@@ -1,0 +1,60 @@
+<!-- Same as ES6 but using sub clases -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+</head>
+
+<body>
+  <h1>React</h1>
+  <div id="main"></div>
+
+  <!-- Use react, react-dom and babel to convert to browser supported JS -->
+  <script type="text/babel">
+    // React gives us a number of convenience helpers out of the box
+    // 1. Instantiates our component using props e.g. <Shape shape="square" color="palegoldenrod"/> instead of new Shape(square, palegoldenrod)
+    // 2. Auto smart renders the component based on specific change in state. Means we dont have to specially look for items to change
+    // 3. Auto bindsEvents, we call events inside the JSX/ HTML with the helper method onClick={this.getRandom.bind(this)} [Note: we need to use .bind(this) for it to know that this refers to the component and no the button]
+    // 4. Auto change state by using helper function this.setState()
+
+    class Shape extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {}
+      }
+      
+      getRandom(){
+        let number = Math.random() * 100
+        this.setState({number})
+      }
+
+      render() {
+        return (
+          <div className="main-shape" style={{background: this.props.color}}>
+            <p>This is a {this.props.shape}</p>
+            <p>Random number: 
+              <span className="number"> {this.state.number}</span>
+            </p>
+            <button className="btn" onClick={this.getRandom.bind(this)}>Click me</button>
+          </div>
+        );
+      }
+    }
+
+    // Initiate
+    ReactDOM.render(
+      <Shape shape="square" color="palegoldenrod"/>,
+      document.getElementById('main')
+    );
+    
+  </script>
+</body>
+
+</html>

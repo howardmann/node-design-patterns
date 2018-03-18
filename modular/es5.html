@@ -15,19 +15,19 @@
   <script>
     // Modular JS
     let makeShape = function(shape, color){
-      this.props = null 
+      this.state = {} 
 
       this.init = () => {
-        this.setState(shape, color)
+        this.props = {
+          shape, color
+        }
         this.render()
         this.cacheDOM()        
         this.bindEvents()
       }
 
-      this.setState = (shape, color) => {
-        this.props = {
-          shape, color
-        }
+      this.setState = (state) => {
+        this.state = state
       }
 
       this.cacheDOM = () => {
@@ -40,16 +40,10 @@
         this.$button.on('click', this.getRandom)
       }
 
-      this.repaint = () => {
-        this.render() 
-        this.cacheDOM() 
-        this.bindEvents()
-      }
-
       this.getRandom = () => {
         let number = Math.random() * 100
-        this.props.number = number
-        this.$number.text(this.props.number)
+        this.setState({number})
+        this.$number.text(this.state.number)
       }
 
       this.render = () => {
@@ -57,7 +51,7 @@
           <div class="main-shape" style="background: ${this.props.color} ">
             <p>This is a ${this.props.shape}</p>
             <p>Random number: 
-              <span class="number">${this.props.number}</span>
+              <span class="number">${this.state.number}</span>
             </p>
             <button class="btn">Click me</button>
           </div>

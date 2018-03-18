@@ -18,22 +18,18 @@
     // Modular JS using classes
     class makeShape {
       constructor(shape, color) {
-        this.props = null
-        this.shape = shape
-        this.color = color
+        this.props = {shape, color}
+        this.state = {}
       }
 
       init() {
-        this.setState(this.shape, this.color)
         this.render()
         this.cacheDOM()
         this.bindEvents()
       }
 
-      setState (shape, color) {
-        this.props = {
-          shape, color
-        }
+      setState(state) {
+        this.state = state
       }
 
       cacheDOM() {
@@ -54,8 +50,8 @@
 
       getRandom() {
         let number = Math.random() * 100
-        this.props.number = number
-        this.$number.text(this.props.number)
+        this.setState({number})
+        this.$number.text(this.state.number)
       }
 
       render() {
@@ -63,7 +59,7 @@
           <div class="main-shape" style="background: ${this.props.color} ">
             <p>This is a ${this.props.shape}</p>
             <p>Random number: 
-              <span class="number">${this.props.number}</span>
+              <span class="number">${this.state.number}</span>
             </p>
             <button class="btn">Click me</button>
           </div>
