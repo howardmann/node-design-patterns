@@ -42,12 +42,6 @@
         this.$button.on('click', this.getRandom.bind(this))
       }
 
-      repaint() {
-        this.render()
-        this.cacheDOM()
-        this.bindEvents()
-      }
-
       getRandom() {
         let number = Math.random() * 100
         this.setState({number})
