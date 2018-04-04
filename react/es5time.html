@@ -1,0 +1,124 @@
+<!-- Showing in HTML for presentation purposes to avoid webpack bundling -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ES5 example</title>
+</head>
+
+<body>
+  <h1>ES5 jQuery without React and with undo history</h1>
+  <div id="main"></div>
+
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script>
+    // Modular JS
+    let makeShape = function (items) {
+      this.state = { items }
+      this.history = {state: [], pos: -1}
+
+      this.init = () => {
+        this.render()
+      }
+
+      this.setState = (state) => {
+        this.state = state
+        
+        // Delete alternate future history
+        this.history.state.splice(this.history.pos + 1)
+
+        // Record history
+        let copyState = $.extend(true, {}, this.state)
+        this.history.state.push(copyState)
+        this.history.pos++        
+      }
+
+      this.bindEvents = () => {
+        $('.btn').on('click', this.addRandomShape)
+        $('.items-list li').on('click', this.removeShape)
+        $('.btn-undo').on('click', this.undo)
+        $('.btn-redo').on('click', this.redo)
+
+        // Disable undo and redo buttons if nothing to undo or redo
+        $('.btn-undo').prop('disabled', this.history.pos < 0)
+        $('.btn-redo').prop('disabled', this.history.pos >= this.history.state.length - 1)
+      }
+
+      this.addRandomShape = () => {
+        let shapes = ['henagon', 'digon', 'triangle', 'quadrilateral', 'pentagon', 'hexagon', 'heptagon', 'octagon', 'nonagon', 'decagon']
+        let randomShape = shapes[Math.floor(Math.random() * shapes.length)]
+        let items = this.state.items
+        items.push(randomShape)
+        this.setState({items})
+        this.render()
+      }
+
+      this.removeShape = (el) => {
+        let index = $('.item').index(el.target)
+        $(el.target).css({ 'text-decoration': 'line-through' })
+        let items = this.state.items
+        items.splice(index, 1)
+        this.setState({ items })
+        window.setTimeout(() => this.render(), 200)
+      }
+
+      this.undo = () => {
+        if (this.history.pos <= 0) { return}
+        // Move history pointer
+        this.history.pos--
+        // Find historic state
+        let historicState = $.extend(true, {}, this.history.state[this.history.pos])        
+        // Update state and render
+        this.state = historicState
+        
+        this.render()
+      }
+
+      this.redo = () => {
+        if (this.history.pos >= this.history.state.length - 1) { return }
+        
+        // Move history pointer
+        this.history.pos++
+        // Find historic state
+        let historicState = $.extend(true, {}, this.history.state[this.history.pos])
+        // Update state and render
+        this.state = historicState
+
+        this.render()        
+      }
+
+      this.render = () => {
+        let items = this.state.items.map(item => {
+          return `<li class="item" style="cursor: pointer">${item}</li>`
+        }).join('')
+
+        let template = `
+          <div class="main-shape">
+            <button class="btn" style="cursor:pointer">Add Shape</button>
+            <ul class="items-list">
+              ${items}
+            </ul>    
+          </div>
+          <p>Click shape to remove</p>
+          <button class="btn-undo">Undo</button>
+          <button class="btn-redo">Redo</button>
+        `
+        $('#main').html(template)
+
+        this.bindEvents()
+      }
+    }
+
+    let shape = new makeShape(['square', 'circle', 'oblong'])
+
+    // Initiate
+    $(document).ready(function () {
+      shape.init()
+    })
+  </script>
+</body>
+
+</html>
