@@ -15,7 +15,6 @@ let fetchTicker = (id) => {
 
 
 // Using partial
-
 let makeGetPartial = function(api) {
   return function endpointPartial(endpoint) {
     return function finalPartial(param) {
@@ -78,5 +77,31 @@ let compareETHFullClean = function(tickerArr) {
 
 compareETHFullClean(['BTC','USD','EUR','AUD']).then(resp => {
   let data = resp
+  return data
+})
+
+// Or same thing as above but using constructor function
+let MakeGetPartial = function (api) {
+  this.domain = api
+  this.buildEndpoint = (endpoint) => {
+    return param => {
+      let baseURL = `${this.domain}/${endpoint}`
+      let url = param ? `${baseURL}${param}` : baseURL
+      return axios.get(url)
+    }
+  }
+}
+
+var coinAPI = new MakeGetPartial('https://api.coinmarketcap.com/v2')
+var getCoins = coinAPI.buildEndpoint('ticker/?limit=10')
+var getCoinTicker = coinAPI.buildEndpoint('ticker/')
+
+getCoins().then(resp => {
+  let data = resp.data
+  return data
+})
+
+getCoinTicker(1).then(resp => {
+  let data = resp.data
   return data
 })

@@ -8,7 +8,7 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/fp-light/partial/2.js"
+      "program": "${workspaceFolder}/fp-light/partial/1.js"
     }
   ]
 }
