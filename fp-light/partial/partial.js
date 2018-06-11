@@ -16,20 +16,20 @@ let fetchTicker = (id) => {
 
 // Using partial
 
-let getPartial = function(api) {
-  return function(endpoint) {
-    return function(param) {
+let makeGetPartial = function(api) {
+  return function endpointPartial(endpoint) {
+    return function finalPartial(param) {
       let baseURL = `${api}/${endpoint}`
-      let url = param ? `${baseURL}/${param}` : baseURL      
+      let url = param ? `${baseURL}${param}` : baseURL
       return axios.get(url)
     }
   }
 }
 
-var getCoinAPI = getPartial('https://api.coinmarketcap.com/v2')
+var getCoinAPI = makeGetPartial('https://api.coinmarketcap.com/v2')
 var getAll = getCoinAPI('ticker/?limit=10')
 var getGlobal = getCoinAPI('global')
-var getTicker = getCoinAPI('ticker')
+var getTicker = getCoinAPI('ticker/')
 
 getAll().then(resp => {
   let data = resp.data.data
@@ -45,3 +45,18 @@ getTicker(3).then(resp => {
   let data = resp.data.data
   return data
 })
+
+var getCryptoAPI = makeGetPartial('https://min-api.cryptocompare.com/data')
+var compareETH = getCryptoAPI('price?fsym=ETH&tsyms=')
+var compareLTC = getCryptoAPI('price?fsym=LTC&tsyms=')
+
+compareETH('BTC,USD,EUR,AUD').then(resp => {
+  let data = resp.data
+  return data  
+})
+
+compareLTC('BTC,USD,EUR,AUD').then(resp => {
+  let data = resp.data
+  return data  
+})
+
