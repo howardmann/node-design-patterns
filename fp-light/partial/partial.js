@@ -26,10 +26,10 @@ let makeGetPartial = function(api) {
   }
 }
 
-var getCoinAPI = makeGetPartial('https://api.coinmarketcap.com/v2')
-var getAll = getCoinAPI('ticker/?limit=10')
-var getGlobal = getCoinAPI('global')
-var getTicker = getCoinAPI('ticker/')
+var makeCoinAPI = makeGetPartial('https://api.coinmarketcap.com/v2')
+var getAll = makeCoinAPI('ticker/?limit=10')
+var getGlobal = makeCoinAPI('global')
+var getTicker = makeCoinAPI('ticker/')
 
 getAll().then(resp => {
   let data = resp.data.data
@@ -46,9 +46,9 @@ getTicker(3).then(resp => {
   return data
 })
 
-var getCryptoAPI = makeGetPartial('https://min-api.cryptocompare.com/data')
-var compareETH = getCryptoAPI('price?fsym=ETH&tsyms=')
-var compareLTC = getCryptoAPI('price?fsym=LTC&tsyms=')
+var makeCryptoAPI = makeGetPartial('https://min-api.cryptocompare.com/data')
+var compareETH = makeCryptoAPI('price?fsym=ETH&tsyms=')
+var compareLTC = makeCryptoAPI('price?fsym=LTC&tsyms=')
 
 compareETH('BTC,USD,EUR,AUD').then(resp => {
   let data = resp.data
