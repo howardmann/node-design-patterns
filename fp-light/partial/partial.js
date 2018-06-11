@@ -49,6 +49,7 @@ getTicker(3).then(resp => {
 var makeCryptoAPI = makeGetPartial('https://min-api.cryptocompare.com/data')
 var compareETH = makeCryptoAPI('price?fsym=ETH&tsyms=')
 var compareLTC = makeCryptoAPI('price?fsym=LTC&tsyms=')
+var compareETHFull = makeCryptoAPI('pricemultifull?fsyms=ETH&tsyms=')
 
 compareETH('BTC,USD,EUR,AUD').then(resp => {
   let data = resp.data
@@ -60,3 +61,22 @@ compareLTC('BTC,USD,EUR,AUD').then(resp => {
   return data  
 })
 
+compareETHFull('BTC,USD,EUR,AUD').then(resp => {
+  let data = resp.data
+  return data  
+})
+
+let compareETHFullClean = function(tickerArr) {
+  let pairs = tickerArr.join(',')
+  return new Promise (resolve => {
+    compareETHFull(pairs).then(resp => {
+      let result = resp.data.DISPLAY.ETH
+      resolve(result)
+    })
+  })
+}
+
+compareETHFullClean(['BTC','USD','EUR','AUD']).then(resp => {
+  let data = resp
+  return data
+})
