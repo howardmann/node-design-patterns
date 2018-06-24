@@ -36,8 +36,8 @@ let getProperty = (arr, prop) => {
 }
 
 let sum = (arr) => {
-  return arr.reduce((el, tally) => {
-    return el + tally
+  return arr.reduce((tally, el) => {
+    return tally + el
   }, 0)
 }
 
