@@ -488,6 +488,8 @@ let pipe = require('lodash/fp/pipe');
 let getPrices = () => Promise.resolve({data})
 
 // Use destructuring in the param, not much change with original
+// Note: we could separate this out further with _.pick and _.setWith but it would be overkill
+// ES6 destructuring already makes our lives easier to pick the properties we want
 let parseTicker = ({symbol,price_usd,market_cap_usd,percent_change_24h,percent_change_7d}) => {
   return Object.assign({}, {
     ticker: symbol,
