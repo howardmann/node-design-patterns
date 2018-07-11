@@ -511,31 +511,23 @@ google.pollSentiment = () => {
 
 
 
-
-// Declarative functional
+// #2 -  Declarative functional
 // Util helpers to DRY code
-let passThrough = fn => a => {
+let sideEffect = fn => a => {
   fn(a) // process side-effects with arg
   return a // pass the arg further
 }
 
-let passThroughWithObj = fn => (obj, a) => {
-  let result = fn(a) // process result
-  return Object.assign({ ...obj
-  }, result) // assign to object clone
+// Merge helper: passes a promise
+let identity = o => o // default helper which returns the arg
+
+const merge = (promise, inner = identity, outer = identity) => o => {
+  return promise(inner(o)) // calls promise with the relevant property from the objects arg (inner)
+    .then(outer) // returns the property from the outer arg
+    .then(result => Object.assign({}, result, o)) // returns a new object combining original object arg and result of promise
 }
 
-let passThroughAwait = fn => async a => {
-  await fn(a) // await promise to resolve
-  return a // pass arg further after promise has resolved
-}
-
-let passThroughWithObjAwait = fn => async (obj, a) => {
-  let result = await fn(a) // await promise to resolve
-  return Object.assign({ ...obj
-  }, result)
-}
-
+// map with async waits for all promises to fulfill before passing result to after .then 
 let mapAsync = async (arr, fn) => await Promise.all(_.map(arr, fn))
 
 // FP style functions with less responsibility
@@ -546,24 +538,17 @@ let filterIdTextArr = pipe(
   _.partialRight(_.map, _.partialRight(_.pick, ['post.title', '_id']))
 )
 
-let analyzeTitle = (o) => google.analyze(o.title)
 let updateScore = (o) => dbClient.updateSentimentScore(o._id, _.get(o,'documentSentiment.score'))
-
-let mapAnalyze = _.partialRight(mapAsync, passThroughWithObjAwait(analyzeTitle))
-
-let mapUpdateScore = _.partialRight(mapAsync, passThroughWithObjAwait(updateScore))
 
 // More declarative style code while still using promises
 google.pollSentimentFP = () => {
   return new Promise(resolve => {
-    dbClient.getAll()
-      .then(filterIdTextArr)
-      .then(mapAnalyze)
-      .then(_.partialRight(_.map, passThrough(logSentiment)))
-      .then(mapUpdateScore)
-      .then(data => {
-        resolve(`No more results, totalResults: ${data.length}`)
-      })
+  dbClient.getAll()
+    .then(filterIdTextArr)
+    .then(_.partialRight(mapAsync, merge(google.analyze, o => o.post.title)))
+    .then(_.partialRight(_.map, sideEffect(logSentiment)))
+    .then(_.partialRight(mapAsync, merge(updateScore)))
+    .then(data => resolve(`No more results, totalResults: ${data.length}`))
   })
 }
 
@@ -571,3 +556,4 @@ google.pollSentimentFP()
   .then(data => {
     data // No more results, totalResults: 8
   })
+
