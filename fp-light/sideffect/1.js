@@ -1,8 +1,7 @@
-// ## Calls the function with arg and returns the original arg
+// ## SIDEEFFECT: Calls the function with arg and returns the original arg
 // This is helpful when using promises and wanting to call a sideffect but then 
 // pass the original result further down the chain
 
-// Util helpers to DRY code
 let sideEffect = fn => a => {
   fn(a) // process side-effects with arg
   return a // pass the arg further
