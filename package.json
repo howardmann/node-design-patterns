@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "axios": "^0.17.1",
-    "lodash": "^4.17.10"
+    "lodash": "^4.17.10",
+    "ramda": "^0.25.0"
   }
 }
