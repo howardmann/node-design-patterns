@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+  <h1>Counter using React JS</h1>
+  <div id="main"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+
+  <script type="text/babel">
+    // Same reducer as prev example
+    let counterReducer = (state=0, action) =>
+      R.cond([
+        [R.equals('INCREMENT'), () => state + 1],
+        [R.equals('DECREMENT'), () => state - 1],
+        [R.T, R.always(state)]
+      ])(action.type)
+
+    class Counter extends React.Component {
+      constructor(props) {
+        super(props)
+        this.state = {
+          number: Number(props.number)
+        }
+      }
+      increment(){
+       let number = counterReducer(this.state.number, {type: 'INCREMENT'})
+       this.setState({number})
+      }
+      decrement(){
+        let number = counterReducer(this.state.number, {type: 'DECREMENT'})
+       this.setState({number})
+      }
+      render() {
+        return (
+          <div id="counter-wrapper">
+            <button id="increment" onClick={this.increment.bind(this)}>+</button>
+            <div id="counter">{this.state.number}</div>
+            <button id="decrement" onClick={this.decrement.bind(this)}>-</button>
+          </div>
+        )
+      }
+    }
+    // Initiate
+    ReactDOM.render(
+      <Counter number="0"/>,
+      document.getElementById('main')
+    )
+  </script>
+</body>
+
+</html>

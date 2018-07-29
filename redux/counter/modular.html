@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+<body>
+  <h1>Counter using modular JS</h1>
+  <div id="main"></div>
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>   -->
+  <script>
+    let makeCounter = function(state){
+      this.init = () => {
+        this.state = state
+        this.load()
+        this.cacheDOM()
+        this.bindEvents()
+      }
+      this.setState = (state) => {
+        this.state = state
+      }
+      this.cacheDOM = () => {
+        this.$increment = document.querySelector('#increment')
+        this.$decrement = document.querySelector('#decrement')
+        this.$counter = document.querySelector('#counter')
+      }
+      this.bindEvents = () => {
+        this.$increment.addEventListener('click', this.increment)
+        this.$decrement.addEventListener('click', this.decrement)
+      }
+      this.increment = () => {
+        this.state.number += 1
+        this.render()
+      }
+      this.decrement = () => {
+        this.state.number -= 1
+        this.render()
+      }
+      this.render = () => {
+        this.$counter.innerHTML = this.state.number
+      }
+      this.load = () => {
+        let template = `
+          <button id="increment">+</button>
+          <div id="counter">${this.state.number}</div>
+          <button id="decrement">-</button>
+        `
+        document.querySelector('#main').innerHTML  = template
+      }
+    }
+    let counter = new makeCounter({number: 0})
+    counter.init() 
+  </script>
+</body>
+</html>

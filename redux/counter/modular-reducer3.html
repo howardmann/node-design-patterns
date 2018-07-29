@@ -1,0 +1,153 @@
+<!-- WITH REDUCER ITS EASIER TO SCALE AND ADD MORE FEATURES. LOGIC LIVES IN THE REDUCER -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+  <h1>Modular Multiple Reducer</h1>
+  <div id="main"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+  <script>
+    // Add more logic to reducer (but does not change state)
+    let counterReducer = (state = 0, action) =>
+      R.cond([
+        [R.equals('INCREMENT'), () => state + 1],
+        [R.equals('DECREMENT'), () => state - 1],
+        [R.equals('DOUBLE'), () => state * 2],
+        [R.equals('RANDOM'), () => Math.floor(Math.random() * 10)],
+        [R.equals('RESET'), () => 0],
+        [R.T, R.always(state)] // Default case helper R.T always returns true
+      ])(action.type)
+
+      let colorReducer = (state = 'gainsboro', action) =>
+        R.cond([
+          [R.equals('STRONG'), R.always('hotpink')],
+          [R.equals('MEDIUM'), R.always('palegoldenrod')],
+          [R.equals('SOFT'), R.always('gainsboro')],
+          [R.equals('RESET'), R.always('white')],
+          [R.T, R.always(state)]
+        ])(action.type)
+
+    let makeCounter = function (state) {
+      this.init = () => {
+        this.state = state
+        this.load()
+        this.cacheDOM()
+        this.bindEvents()
+      }
+      this.setState = (state) => {
+        this.state = state
+      }
+      this.cacheDOM = () => {
+        // Number counter
+        this.$counter = document.querySelector('#counter')
+        this.$increment = document.querySelector('#increment')
+        this.$decrement = document.querySelector('#decrement')
+        this.$double = document.querySelector('#double')
+        this.$random = document.querySelector('#random')
+        this.$reset = document.querySelector('#reset')
+        // Color
+        this.$wrapper = document.querySelector('#wrapper')
+        this.$select = document.querySelector('#select')
+      }
+      // Dispatch helper which receives action, updates state using reducer, and calls render
+      this.dispatchCounter = (action) => {
+        this.state.number = counterReducer(this.state.number, action)
+        this.renderCounter()
+      }
+      // dispatch for color
+      this.dispatchColor = (action) => {
+        this.state.color = colorReducer(this.state.color, action)
+        this.renderColor()
+      }
+      this.actions = {
+        // Counter actions
+        counter: {
+          increment: () => this.dispatchCounter({
+            type: 'INCREMENT'
+          }),
+          decrement: () => this.dispatchCounter({
+            type: 'DECREMENT'
+          }),
+          double: () => this.dispatchCounter({
+            type: 'DOUBLE'
+          }),
+          reset: () => this.dispatchCounter({
+            type: 'RESET'
+          }),
+          random: () => this.dispatchCounter({
+            type: 'RANDOM'
+          })
+        },
+        // color actions
+        color: {
+          strong: () => this.dispatchColor({
+            type: 'STRONG'
+          }),
+          medium: () => this.dispatchColor({
+            type: 'MEDIUM'
+          }),
+          soft: () => this.dispatchColor({
+            type: 'SOFT'
+          }),
+          reset: () => this.dispatchColor({
+            type: 'RESET'
+          })
+        }
+      }
+      this.bindEvents = () => {
+        // Counter events
+        this.$increment.addEventListener('click', this.actions.counter.increment)
+        this.$decrement.addEventListener('click', this.actions.counter.decrement)
+        this.$double.addEventListener('click', this.actions.counter.double)
+        this.$reset.addEventListener('click', this.actions.counter.reset)
+        this.$random.addEventListener('click', this.actions.counter.random)
+        // Color events
+        this.$select.addEventListener('change', (e) => this.actions.color[e.target.value]())
+      }
+      this.renderCounter = () => {
+        this.$counter.innerHTML = this.state.number
+      }
+      this.renderColor = () => {
+        this.$wrapper.style.background = this.state.color
+      }
+      this.load = () => {
+        let template =
+          `
+          <div id="wrapper" style="background: ${this.state.color}">
+            <p>Counter</p>
+            <button id="decrement">-</button>
+            <span id="counter">${this.state.number}</span>
+            <button id="increment">+</button>
+            <p>Bonus counter opts</p>
+            <button id="double">x2</button>
+            <button id="random">?</button>
+            <button id="reset">Reset</button>
+            <hr>
+
+            <p>Color setter</p>
+            <select id="select">
+              <option value="strong">strong</option>
+              <option selected value="medium">medium</option>
+              <option value="soft">soft</option>
+              <option value="reset">reset</option>
+            </select>
+          </div>
+        `
+        document.querySelector('#main').innerHTML = template
+      }
+    }
+    let counter = new makeCounter({
+      number: 0,
+      color: 'gainsboro'
+    })
+    counter.init()
+  </script>
+</body>
+
+</html>

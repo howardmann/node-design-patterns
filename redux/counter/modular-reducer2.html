@@ -1,0 +1,89 @@
+<!-- WITH REDUCER ITS EASIER TO SCALE AND ADD MORE FEATURES. LOGIC LIVES IN THE REDUCER -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+  <h1>Counter using modular reducer JS</h1>
+  <div id="main"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>   -->
+  <script>
+    // Add more logic to reducer (but does not change state)
+    let counterReducer = (state = 0, action) =>
+      R.cond([
+        [R.equals('INCREMENT'), () => state + 1],
+        [R.equals('DECREMENT'), () => state - 1],
+        [R.equals('DOUBLE'), () => state * 2],
+        [R.equals('RANDOM'), () => Math.floor(Math.random()*10)],
+        [R.equals('RESET'), () => 0],
+        [R.T, R.always(state)] // Default case helper R.T always returns true
+      ])(action.type)
+
+    let makeCounter = function (state) {
+      this.init = () => {
+        this.state = state
+        this.load()
+        this.cacheDOM()
+        this.bindEvents()
+      }
+      this.setState = (state) => {
+        this.state = state
+      }
+      this.cacheDOM = () => {
+        this.$increment = document.querySelector('#increment')
+        this.$decrement = document.querySelector('#decrement')
+        this.$counter = document.querySelector('#counter')
+        this.$double = document.querySelector('#double')
+        this.$random = document.querySelector('#random')
+        this.$reset = document.querySelector('#reset')
+      }
+      // Dispatch helper which receives action, updates state using reducer, and calls render
+      this.dispatch = (action) => {
+        this.state.number = counterReducer(this.state.number, action)
+        this.render()
+      }
+      this.actions = {
+        increment: () => this.dispatch({type: 'INCREMENT'}),
+        decrement: () => this.dispatch({type: 'DECREMENT'}),
+        double: () => this.dispatch({type: 'DOUBLE'}),
+        reset: () => this.dispatch({type: 'RESET'}),
+        random: () => this.dispatch({type: 'RANDOM'})
+      }
+      this.bindEvents = () => {
+        this.$increment.addEventListener('click', this.actions.increment),
+        this.$decrement.addEventListener('click', this.actions.decrement),
+        this.$double.addEventListener('click', this.actions.double),
+        this.$reset.addEventListener('click', this.actions.reset),
+        this.$random.addEventListener('click', this.actions.random)
+      }
+      this.render = () => {
+        this.$counter.innerHTML = this.state.number
+      }
+      this.load = () => {
+        let template =
+          `
+          <button id="increment">+</button>
+          <div id="counter">${this.state.number}</div>
+          <button id="decrement">-</button>
+          <hr>
+          <button id="double">x2</button>
+          <button id="random">?</button>
+          <button id="reset">Reset</button>
+        `
+        document.querySelector('#main').innerHTML = template
+      }
+    }
+    let counter = new makeCounter({
+      number: 0
+    })
+    counter.init()
+  </script>
+</body>
+
+</html>
