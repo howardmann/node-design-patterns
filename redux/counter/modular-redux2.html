@@ -9,40 +9,48 @@
 </head>
 
 <body>
-  <h1>Modular Multiple Reducer</h1>
+  <h1>Modular Multiple Redux Reducer</h1>
   <div id="main"></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.0/redux.min.js"></script>
   <script>
-    // Add more logic to reducer (but does not change state)
-    let counterReducer = (state = 0, action) =>
-      R.cond([
-        [R.equals('INCREMENT'), () => state + 1],
-        [R.equals('DECREMENT'), () => state - 1],
-        [R.equals('DOUBLE'), () => state * 2],
-        [R.equals('RANDOM'), () => Math.floor(Math.random() * 10)],
-        [R.equals('RESET'), () => 0],
-        [R.T, R.always(state)] // Default case helper R.T always returns true
-      ])(action.type)
-
-    let colorReducer = (state = 'gainsboro', action) =>
-      R.cond([
-        [R.equals('STRONG'), R.always('hotpink')],
-        [R.equals('MEDIUM'), R.always('palegoldenrod')],
-        [R.equals('SOFT'), R.always('gainsboro')],
-        [R.equals('RESET'), R.always('white')],
-        [R.T, R.always(state)]
-      ])(action.type)
-
-    let makeCounter = function (state) {
+    let makeCounter = function (initialState) {
+      this.props = initialState
+      
       this.init = () => {
-        this.state = state
+        this.store = Redux.createStore(this.reducer)
         this.load()
         this.cacheDOM()
         this.bindEvents()
+        this.render()
       }
-      this.setState = (state) => {
-        this.state = state
+
+      this.reducer = (state = initialState, action) => ({
+        number: this.counterReducer(state.number, action),
+        color: this.colorReducer(state.color, action)
+      })
+
+      this.counterReducer = (state = 0, action) => {
+        return R.cond([
+          [R.equals('INCREMENT'), () => state + 1],
+          [R.equals('DECREMENT'), () => state - 1],
+          [R.equals('DOUBLE'), () => state * 2],
+          [R.equals('RANDOM'), () => Math.floor(Math.random() * 10)],
+          [R.equals('RESET_COUNTER'), () => 0],
+          [R.T, R.always(state)] // Default case helper R.T always returns true
+        ])(action.type)
       }
+
+      this.colorReducer = (state = 'gainsboro', action) => {
+        return R.cond([
+          [R.equals('STRONG'), R.always('hotpink')],
+          [R.equals('MEDIUM'), R.always('palegoldenrod')],
+          [R.equals('SOFT'), R.always('gainsboro')],
+          [R.equals('RESET_COLOR'), R.always('white')],
+          [R.T, R.always(state)]
+        ])(action.type)
+      }
+
       this.cacheDOM = () => {
         // Number counter
         this.$counter = document.querySelector('#counter')
@@ -55,51 +63,25 @@
         this.$wrapper = document.querySelector('#wrapper')
         this.$select = document.querySelector('#select')
       }
-      // Dispatch helper which receives action, updates state using reducer, and calls render
-      this.dispatchCounter = (action) => {
-        this.state.number = counterReducer(this.state.number, action)
-        this.renderCounter()
-      }
-      // dispatch for color
-      this.dispatchColor = (action) => {
-        this.state.color = colorReducer(this.state.color, action)
-        this.renderColor()
-      }
+
       this.actions = {
         // Counter actions
         counter: {
-          increment: () => this.dispatchCounter({
-            type: 'INCREMENT'
-          }),
-          decrement: () => this.dispatchCounter({
-            type: 'DECREMENT'
-          }),
-          double: () => this.dispatchCounter({
-            type: 'DOUBLE'
-          }),
-          reset: () => this.dispatchCounter({
-            type: 'RESET'
-          }),
-          random: () => this.dispatchCounter({
-            type: 'RANDOM'
-          })
+          increment: () => this.store.dispatch({type: 'INCREMENT',}),
+          decrement: () => this.store.dispatch({type: 'DECREMENT'}),
+          double: () => this.store.dispatch({type: 'DOUBLE'}),
+          reset: () => this.store.dispatch({type: 'RESET_COUNTER'}),
+          random: () => this.store.dispatch({type: 'RANDOM'})
         },
         // color actions
         color: {
-          strong: () => this.dispatchColor({
-            type: 'STRONG'
-          }),
-          medium: () => this.dispatchColor({
-            type: 'MEDIUM'
-          }),
-          soft: () => this.dispatchColor({
-            type: 'SOFT'
-          }),
-          reset: () => this.dispatchColor({
-            type: 'RESET'
-          })
+          strong: () => this.store.dispatch({type: 'STRONG'}),
+          medium: () => this.store.dispatch({type: 'MEDIUM'}),
+          soft: () => this.store.dispatch({type: 'SOFT'}),
+          reset: () => this.store.dispatch({type: 'RESET_COLOR'})
         }
       }
+      
       this.bindEvents = () => {
         // Counter events
         this.$increment.addEventListener('click', this.actions.counter.increment)
@@ -110,19 +92,22 @@
         // Color events
         this.$select.addEventListener('change', (e) => this.actions.color[e.target.value]())
       }
-      this.renderCounter = () => {
-        this.$counter.innerHTML = this.state.number
+      
+      this.render = () => {
+        this.store.subscribe((() => {
+          console.log(this.store.getState());
+          this.$counter.innerText = this.store.getState().number
+          this.$wrapper.style.background = this.store.getState().color
+        }))
       }
-      this.renderColor = () => {
-        this.$wrapper.style.background = this.state.color
-      }
+      
       this.load = () => {
         let template =
           `
-          <div id="wrapper" style="background: ${this.state.color}">
+          <div id="wrapper" style="background: ${this.props.color}">
             <p>Counter</p>
             <button id="decrement">-</button>
-            <span id="counter">${this.state.number}</span>
+            <span id="counter">${this.props.number}</span>
             <button id="increment">+</button>
             <p>Bonus counter opts</p>
             <button id="double">x2</button>
@@ -142,9 +127,11 @@
         document.querySelector('#main').innerHTML = template
       }
     }
+
+    // Initiaite
     let counter = new makeCounter({
       number: 0,
-      color: 'gainsboro'
+      color: 'palegoldenrod'
     })
     counter.init()
   </script>

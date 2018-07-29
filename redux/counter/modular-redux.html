@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+</head>
+
+<body>
+  <h1>Counter using modular JS and Redux</h1>
+  <div id="main"></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ramda/0.25.0/ramda.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.0.0/redux.min.js"></script>
+
+  <script>    
+    let makeCounter = function (initialState) {
+      this.props = initialState
+
+      this.init = () => {
+        this.store = Redux.createStore(this.counterReducer)
+        this.load()
+        this.cacheDOM()
+        this.bindEvents()
+        this.render()
+      }
+      
+      this.counterReducer = (state = initialState, action) =>
+        R.cond([
+          [R.equals('INCREMENT'), () => ({...state, number: state.number + 1})],
+          [R.equals('DECREMENT'), () => ({...state, number: state.number - 1})],
+          [R.T, R.always(state)] // Default case helper R.T always returns true
+        ])(action.type)
+
+      this.actions = {
+        increment: () => this.store.dispatch({type: 'INCREMENT'}),
+        decrement: () => this.store.dispatch({type: 'DECREMENT'})
+      }
+
+      this.render = () => {
+        this.store.subscribe((() => {
+          console.log(this.store.getState());
+          this.$counter.innerText = this.store.getState().number
+        }))
+      }
+
+      this.cacheDOM = () => {
+        this.$increment = document.querySelector('#increment')
+        this.$decrement = document.querySelector('#decrement')
+        this.$counter = document.querySelector('#counter')
+      }
+
+      this.bindEvents = () => {
+        this.$increment.addEventListener('click', this.actions.increment)
+        this.$decrement.addEventListener('click', this.actions.decrement)
+      }
+
+      this.load = () => {
+        let template =
+          `
+          <button id="increment">+</button>
+          <div id="counter">${this.props.number}</div>
+          <button id="decrement">-</button>
+        `
+        document.querySelector('#main').innerHTML = template
+      }
+    }
+
+    // Execute
+    let counter = new makeCounter({
+      number: 0
+    })
+    counter.init()
+  </script>
+</body>
+
+</html>
