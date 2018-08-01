@@ -1,0 +1,75 @@
+<!-- Same as ES6 but using sub clases -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>React</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-with-addons.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.7/react-dom.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+</head>
+
+<body>
+  <h1>React</h1>
+  <div id="main"></div>
+
+  <!-- Use react, react-dom and babel to convert to browser supported JS -->
+  <script type="text/babel">
+    
+    class Clock extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = {date: new Date()}
+      }
+
+      componentDidMount(){
+        this.timerID = setInterval(() => {
+          this.tick(), 1000
+        })
+      }
+
+      componentWillUnmount(){
+        clearInterval(this.timerID)
+      }
+
+      tick(){
+        this.setState({
+          date: new Date()
+        })
+      }
+      
+      render() {
+        return (
+          <div className="clock" style={{background: this.props.color}}>
+            <p>Time is: {this.state.date.toLocaleTimeString()}</p>
+          </div>
+        );
+      }
+    }
+    
+    class App extends React.Component {
+      render(){
+        return (
+          <div>
+            <h2>Clocks lots</h2>
+            <Clock color="palegoldenrod"/>
+            <Clock color="salmon" />
+            <Clock color="hotpink" />
+            <Clock color="gainsboro" />
+          </div>
+        )
+      }
+    }
+    // Initiate
+    ReactDOM.render(
+      <App/>,
+      document.getElementById('main')
+    );
+    
+  </script>
+</body>
+
+</html>
