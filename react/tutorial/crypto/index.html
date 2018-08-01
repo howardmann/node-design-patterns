@@ -19,16 +19,21 @@
   <!-- Use react, react-dom and babel to convert to browser supported JS -->
   <script type="text/babel">
     
-    class Clock extends React.Component {
+    class Coin extends React.Component {
       constructor(props) {
         super(props);
-        this.state = {date: new Date()}
+        this.state = {
+          counter: 1,
+          data: {
+          name: 'Bitcoin',
+          symbol: 'BTC'
+        }}
       }
 
       componentDidMount(){
         this.timerID = setInterval(
-          () => this.tick(), 
-          1000
+          () => this.update(), 
+          1500
         )
       }
 
@@ -36,16 +41,24 @@
         clearInterval(this.timerID)
       }
 
-      tick(){
-        this.setState({
-          date: new Date()
-        })
+      update(){
+        fetch(`https://api.coinmarketcap.com/v2/ticker/${this.state.counter}/`)
+          .then(resp => resp.json())
+          .then(resp => resp.data)
+          .then(data => {
+            this.setState(prevState => ({
+              counter: prevState.counter + 1,
+              data
+            }))
+          })
       }
       
       render() {
         return (
-          <div className="clock" style={{background: this.props.color}}>
-            <p>Time is: {this.state.date.toLocaleTimeString()}</p>
+          <div className="coin" style={{background: this.props.color}}>
+            <p>Counter: {this.state.counter}</p>
+            <p>Name: {this.state.data.name}</p>
+            <p>Symbol: {this.state.data.symbol}</p>
           </div>
         );
       }
@@ -55,11 +68,8 @@
       render(){
         return (
           <div>
-            <h2>Clocks lots</h2>
-            <Clock color="palegoldenrod"/>
-            <Clock color="salmon" />
-            <Clock color="hotpink" />
-            <Clock color="gainsboro" />
+            <h2>Crypto data</h2>
+            <Coin color="palegoldenrod"/>
           </div>
         )
       }
