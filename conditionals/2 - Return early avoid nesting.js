@@ -24,6 +24,7 @@ let checkFruit = (fruit) => {
 checkFruit('strawberry') // red berry
 
 // Return early less nesting
+// Start with most specific and then go general (e..g 1. check string, 2. check red berry, 3. check red fruit)
 let checkFruit2 = (fruit) => {
   let redFruits = ['apple', 'strawberry', 'rasberry', 'pomegranite', 'cherry']
   let isBerry = (str) => /berry/.test(str)
@@ -39,6 +40,6 @@ let checkFruit2 = (fruit) => {
 }
 
 checkFruit2(42) // not a string
-checkFruit2('apple') // red berry
 checkFruit2('strawberry') // red berry
+checkFruit2('apple') // red fruit
 checkFruit2('halleberry') // not red fruit

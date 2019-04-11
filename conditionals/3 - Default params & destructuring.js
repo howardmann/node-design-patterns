@@ -11,9 +11,9 @@ orderFruit('apple', 2) // Order 2 apple
 
 // Use default param
 let orderFruit2 = (fruit, quantity = 1) => {
-  let q = quantity || 1
-  return `Order ${q} ${fruit}`
+  return `Order ${quantity} ${fruit}`
 }
+
 
 orderFruit2('apple') // Order 1 apple
 orderFruit2('apple', 2) // Order 2 apple
